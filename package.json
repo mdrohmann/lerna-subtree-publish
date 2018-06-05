@@ -1,0 +1,14 @@
+{
+  "name": "lerna-subtree-publish",
+  "version": "1.0.0",
+  "description": "tools to publish packages with lerna and git subtree",
+  "main": "index.js",
+  "repository": "git@gitlab.com/mcdrohmann/lerna-subtree-publish.git",
+  "author": "Martin C Drohmann <martin@connectedsignals.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "shell-escape": "^0.2.0",
+    "shelljs": "^0.8.2"
+  }
+}
