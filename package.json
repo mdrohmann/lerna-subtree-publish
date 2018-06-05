@@ -11,7 +11,8 @@
     "lerna-publish": "./index.js"
   },
   "scripts": {
-    "build": "tsc index.ts"
+    "build": "tsc index.ts",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "shell-escape": "^0.2.0",
