@@ -31,6 +31,14 @@ const res = shell.exec(`lerna publish ${lernaArgs}`)
 if (res.code !== 0) {
   process.exit(res.code)
 }
+if (
+  lernaArgs === "-h" ||
+  lernaArgs === "-v" ||
+  lernaArgs === "--help" ||
+  lernaArgs === "--version"
+) {
+  process.exit(0)
+}
 
 // a short shim that I use because shell.exec(..., {silent: true}) believes that
 // it does not always return an ExecOutputReturnValue, so it needs an explicit
