@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.1"></a>
+## [1.1.1](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.1.0...v1.1.1) (2018-06-06)
+
+
+### Bug Fixes
+
+* **packaging:** Add files section, such that JS files are actually packaged. ([9d55179](https://gitlab.com/mcdrohmann/lerna-subtree-publish/commit/9d55179))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.0.4...v1.1.0) (2018-06-06)
 
