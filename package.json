@@ -8,10 +8,11 @@
   "license": "MIT",
   "private": false,
   "bin": {
-    "lerna-publish": "./index.js"
+    "lerna-publish": "./index.js",
+    "gitsbt-all": "./gitsbt-all.js"
   },
   "scripts": {
-    "build": "tsc index.ts",
+    "build": "tsc *.ts",
     "prepare": "npm run build"
   },
   "dependencies": {

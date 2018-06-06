@@ -2,6 +2,7 @@
 import * as path from "path"
 import * as shell from "shelljs"
 import * as escape from "shell-escape"
+import { Subtrees } from "./types"
 
 /**
  * This script can be used just like the `lerna publish` command.
@@ -17,14 +18,6 @@ import * as escape from "shell-escape"
  */
 
 // tslint:disable:no-console
-interface Subtrees {
-  readonly [name: string]: {
-    readonly localFolder: string
-    readonly repository: string
-    readonly branch: string
-  }
-}
-
 const lernaArgs = escape(process.argv.slice(2))
 
 const res = shell.exec(`lerna publish ${lernaArgs}`)
