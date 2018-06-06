@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Subtrees } from "./types"
 import * as path from "path"
 import * as shell from "shelljs"
