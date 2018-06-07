@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as path from "path"
 import * as shell from "shelljs"
-import * as escape from "shell-escape"
+import * as child_process from "child_process"
 import { Subtrees } from "./types"
 
 /**
@@ -18,17 +18,37 @@ import { Subtrees } from "./types"
  */
 
 // tslint:disable:no-console
-const lernaArgs = escape(process.argv.slice(2))
+const lernaArgs = process.argv.slice(2)
 
-const res = shell.exec(`lerna publish ${lernaArgs}`)
-if (res.code !== 0) {
-  process.exit(res.code)
+process.env.PATH +=
+  path.delimiter + path.join(__dirname, "node_modules", ".bin")
+
+// tslint:disable-next-line:no-var-requires
+const subtrees: Subtrees = require(path.join(process.cwd(), "subtrees.json"))
+
+// We will push the subtree changes before running lerna publish in order to
+// make sure that we do not have to pull first.
+Object.keys(subtrees).forEach(s => {
+  console.log(`Pushing sub-tree changes to ${s}`)
+  const pushSubtreeRes = shell.exec(`gitsbt push ${s}`)
+  if (pushSubtreeRes.code !== 0) {
+    console.error(`Could not push changes to sub-tree ${s}`)
+  }
+})
+
+try {
+  child_process.execFileSync("lerna", ["publish"].concat(lernaArgs), {
+    stdio: "inherit"
+  })
+} catch (error) {
+  process.exit(-2)
 }
 if (
-  lernaArgs === "-h" ||
-  lernaArgs === "-v" ||
-  lernaArgs === "--help" ||
-  lernaArgs === "--version"
+  lernaArgs.length === 1 &&
+  (lernaArgs[0] === "-h" ||
+    lernaArgs[0] === "-v" ||
+    lernaArgs[0] === "--help" ||
+    lernaArgs[0] === "--version")
 ) {
   process.exit(0)
 }
@@ -39,10 +59,12 @@ if (
 const shellExecSilent = (cmd: string): shell.ExecOutputReturnValue =>
   shell.exec(cmd, { silent: true }) as shell.ExecOutputReturnValue
 
-// tslint:disable-next-line:no-var-requires
-const subtrees: Subtrees = require(path.join(process.cwd(), "subtrees.json"))
-
 Object.keys(subtrees).forEach(s => {
+  console.log(`Pushing sub-tree changes again to ${s}`)
+  const pushSubtreeRes = shell.exec(`gitsbt push ${s}`)
+  if (pushSubtreeRes.code !== 0) {
+    console.error(`Could not push changes to sub-tree ${s}`)
+  }
   const config = subtrees[s]
   const res = shellExecSilent(
     `git log -n 2 --pretty=format:%h -- ${config.localFolder}`
