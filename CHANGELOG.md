@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.3"></a>
+## [1.1.3](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.1.2...v1.1.3) (2018-06-07)
+
+
+### Bug Fixes
+
+* **lerna-publish:** Allow lerna-publish to be interactive, push to sub-trees ([7f198cc](https://gitlab.com/mcdrohmann/lerna-subtree-publish/commit/7f198cc))
+
+
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.1.1...v1.1.2) (2018-06-06)
 
