@@ -2,7 +2,7 @@
   "name": "lerna-subtree-publish",
   "version": "1.2.1",
   "description": "tools to publish packages with lerna and git subtree",
-  "main": "index.js",
+  "main": "build/index.js",
   "repository": "git@gitlab.com/mcdrohmann/lerna-subtree-publish.git",
   "author": "Martin C Drohmann <martin@connectedsignals.com>",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "lerna-create": "./build/lerna-create.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --project . --target es5 --module commonjs",
     "prepare": "npm run build",
     "test": "jest"
   },
@@ -47,6 +47,7 @@
     "colour": "^0.7.1",
     "execa": "^0.10.0",
     "mkdirp-promise": "^5.0.1",
+    "rimraf": "^2.6.2",
     "shell-escape": "^0.2.0",
     "shelljs": "^0.8.2",
     "tmp": "^0.0.33",
@@ -63,7 +64,6 @@
     "@types/yargs": "^11.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "jest": "^23.1.0",
-    "rimraf": "^2.6.2",
     "ts-jest": "^22.4.6",
     "typescript": "^2.9.1"
   },
