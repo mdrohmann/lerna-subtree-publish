@@ -38,7 +38,7 @@ export const lernaSplitArgs = (argv: ReadonlyArray<string>) => {
       : argv.slice(3, repoIndex).concat(argv.slice(repoIndex + 2))
 
   return {
-    name: argv[3],
+    name: argv[2],
     repo,
     argv: newArgv
   }
