@@ -9,7 +9,8 @@
   "private": false,
   "bin": {
     "lerna-publish": "./index.js",
-    "gitsbt-all": "./gitsbt-all.js"
+    "lerna-subtree": "./lerna-subtree.js",
+    "lerna-create": "./lerna-create.js"
   },
   "scripts": {
     "build": "tsc",
@@ -32,7 +33,7 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "/src/arc",
+      "/__test__/",
       "/test/"
     ],
     "collectCoverage": true,

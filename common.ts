@@ -8,19 +8,25 @@ import * as color from "colour"
 // a short shim that I use because shell.exec(..., {silent: true}) believes that
 // it does not always return an ExecOutputReturnValue, so it needs an explicit
 // cast.
-export const getSubtrees = (cwd: string = process.cwd()): Subtrees => {
+export const getSubtrees = async (
+  cwd: string = process.cwd()
+): Promise<Subtrees> => {
   try {
-    return require(path.join(cwd, "subtrees.json"))
+    return JSON.parse(
+      await promisify(fs.readFile)(path.join(cwd, "subtrees.json"), "utf8")
+    )
   } catch (error) {
-    throw new Error(`subtrees.json file does not exit.`)
+    throw new Error(
+      `subtrees.json file does not exit, or could not be parsed:\n${error}`
+    )
   }
 }
 
-export const getSubtreeConfig = (
+export const getSubtreeConfig = async (
   treeName: string,
   cwd: string = process.cwd()
 ) => {
-  const subtrees = getSubtrees(cwd)
+  const subtrees = await getSubtrees(cwd)
   if (subtrees.hasOwnProperty(treeName)) {
     return subtrees[treeName]
   } else {
@@ -29,19 +35,42 @@ export const getSubtreeConfig = (
   }
 }
 
+export const gitSubtreeSplit = async (
+  config: SubtreeConfig,
+  ref: string = "master",
+  cwd: string = process.cwd()
+) => {
+  const res = execa.shell(
+    `git subtree split --prefix=${config.localFolder} ${ref} --squash`,
+    { cwd }
+  )
+  res.stdout.pipe(process.stdout)
+
+  const result = await res
+
+  if (result.code !== 0) {
+    throw new Error(`Could not push to ${config.repository}\n:${res.stderr}`)
+  }
+  return result.stdout
+}
+
 export const gitSubtreeCmd = async (
   config: SubtreeConfig,
   command: string,
-  treeName: string
+  treeName: string,
+  cwd: string = process.cwd()
 ) => {
   const res = execa.shell(
     `git subtree ${command} --prefix=${config.localFolder} ${treeName} ${
       config.branch
-    } --squash`
+    } --squash`,
+    { cwd }
   )
   res.stdout.pipe(process.stdout)
 
-  if ((await res).code !== 0) {
+  const result = await res
+
+  if (result.code !== 0) {
     throw new Error(`Could not push to ${treeName}\n:${res.stderr}`)
   }
 }
@@ -143,7 +172,7 @@ export const gitPush = async (
   ref: string,
   cwd: string = process.cwd()
 ) => {
-  return execa.shell(`git push ${upstream} ${ref}`, { cwd })
+  return execa.shell(`git push --follow-tags ${upstream} ${ref}`, { cwd })
 }
 
 export const gitHashOfTag = async (
@@ -235,7 +264,6 @@ export const lastPublishedTag = async (
 }
 
 export const gitChangesPending = async (cwd: string = process.cwd()) => {
-  console.log("cwd", cwd)
   const res = await execa.shell("git status --porcelain --untracked=no", {
     cwd
   })
@@ -244,7 +272,6 @@ export const gitChangesPending = async (cwd: string = process.cwd()) => {
   }
 
   if (res.stdout !== "") {
-    console.log("error", "working tree has modifications.")
     throw new Error(
       `Working tree has modifications. Sort them out first.\n${res.stdout}`
     )
@@ -291,7 +318,6 @@ export const gitSubtreeAdd = async (
       .shell(`git fetch ${treeName}`, { cwd })
       .stdout.pipe(process.stdout)
 
-    console.log(treeName, cwd, config.localFolder)
     await execa.shell(
       `git subtree add --prefix=${config.localFolder} ${treeName} ${
         config.branch
@@ -306,9 +332,8 @@ export const commandAll = async (
   skipCurrentTrees: boolean = false,
   cwd: string = process.cwd()
 ) => {
-  console.log("cwd 2", cwd)
   await gitChangesPending(cwd)
-  const subtrees = getSubtrees(cwd)
+  const subtrees = await getSubtrees(cwd)
   await Promise.all(
     Object.keys(subtrees).map(async treeName => {
       if (
@@ -331,24 +356,24 @@ export const commandSingle = async (
   handler: (config: SubtreeConfig, treeName: string) => Promise<void>,
   cwd: string = process.cwd()
 ) => {
-  console.log("cwd 1", cwd)
   await gitChangesPending(cwd)
-  const config = getSubtreeConfig(treeName, cwd)
+  const config = await getSubtreeConfig(treeName, cwd)
   await handler(config, treeName)
 }
 
-export const getUpdatedPackages = async () => {
-  const updates = await execa
-    .shell("lerna updated --json")
-    .stdout.toString()
-    .trim()
-  if (updates === "") {
-    return []
-  } else {
+export const getUpdatedPackages = async (cwd: string = process.cwd()) => {
+  try {
+    const res = await execa.shell("lerna updated --json", { cwd })
+    const updates = res.stdout.toString().trim()
+    if (updates === "") {
+      return []
+    }
     return JSON.parse(updates) as ReadonlyArray<{
       name: string
       version: string
       private: boolean
     }>
+  } catch (error) {
+    return []
   }
 }

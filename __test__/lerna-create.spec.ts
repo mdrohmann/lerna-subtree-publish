@@ -10,13 +10,15 @@ import * as fs from "fs"
 import * as path from "path"
 import { getLernaJson, gitPush } from "../common"
 import * as execa from "execa"
+import mkdirp from "mkdirp-promise"
+import { expectableCommitTree, expectableSubtrees } from "../helpers/expect"
 
 describe("lerna-create", () => {
   let directories: TemporaryDirectories
   let embedRuntimeSpy: jest.SpyInstance
 
-  beforeAll(async () => {
-    directories = await initTemporaryLerna(1)
+  beforeAll(async done => {
+    directories = await initTemporaryLerna(0)
     embedRuntimeSpy = jest.spyOn(lc, "embedRuntime")
     /*
     embedRuntimeSpy.mockImplementation((_, __, ___, cwd: string) => {
@@ -29,28 +31,32 @@ describe("lerna-create", () => {
       )
     })
     */
+    done()
   })
 
-  afterAll(async () => {
+  afterAll(async done => {
     try {
       await promisify(rimraf)(directories.path)
     } catch (err) {
       console.error(`Something went wrong during delete of ${directories.path}`)
     }
     embedRuntimeSpy.mockRestore()
+    done()
   })
 
-  it("should throw an error if name exists already", async () => {
+  it("should throw an error if name exists already", async done => {
     try {
-      await lernaCreate("p1", "invalid", [], directories.lernaBase)
+      await mkdirp(path.join(directories.lernaBase, "packages", "p1"))
+      await lernaCreate("p1", "invalid", ["--yes"], directories.lernaBase)
       expect(true).toBe(false)
     } catch (error) {
       // console.log(error)
       expect(true).toBe(true)
     }
+    done()
   })
 
-  it("should throw an error if something goes wrong during git repo creation", async () => {
+  it("should throw an error if something goes wrong during git repository creation", async () => {
     try {
       await lernaCreate("p2", "invalid", ["--yes"], directories.lernaBase)
       expect(true).toBe(false)
@@ -96,7 +102,7 @@ describe("lerna-create", () => {
     try {
       await lernaCreate(
         "p4",
-        path.join(directories.repoBase, "p4"),
+        path.join(directories.repositoryBase, "p4"),
         ["--yes"],
         directories.lernaBase
       )
@@ -104,11 +110,18 @@ describe("lerna-create", () => {
 
       await gitPush("origin", "master", directories.lernaBase)
 
-      const output = await execa.shell(
-        "git log --decorate --pretty=format:'commit %d' --graph master p4/master",
-        { cwd: directories.lernaBase }
-      )
-      expect(output.stdout).toMatchSnapshot()
+      expect(
+        await expectableCommitTree(directories.lernaBase, [
+          "master",
+          "p4/master"
+        ])
+      ).toMatchSnapshot()
+      expect(
+        await expectableSubtrees(
+          directories.lernaBase,
+          directories.repositoryBase
+        )
+      ).toMatchSnapshot()
     } catch (error) {
       console.error(error)
       expect(true).toBe(false)

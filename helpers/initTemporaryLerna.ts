@@ -5,11 +5,12 @@ import * as path from "path"
 import * as execa from "execa"
 import { SubtreeConfig } from "types"
 import { gitTag, gitRemoteAdd, gitPush } from "../common"
+import { lernaCreate } from "../lib/create"
 
 export const LERNA_ROOT_NAME = "lerna-tmp-root"
 
 export const makeSubtrees = (
-  repoBase: string,
+  repositoryBase: string,
   packageNames: ReadonlyArray<string>
 ) =>
   packageNames.reduce<{
@@ -18,7 +19,7 @@ export const makeSubtrees = (
     p[n] = {
       localFolder: path.join("packages", n),
       branch: "master",
-      repository: path.join(repoBase, n)
+      repository: path.join(repositoryBase, n)
     }
     return p
   }, {})
@@ -75,7 +76,7 @@ export const initSubPackage = async (directory: string) => {
 export interface TemporaryDirectories {
   lernaBase: string
   path: string
-  repoBase: string
+  repositoryBase: string
 }
 
 export const initTemporaryLerna = async (
@@ -97,37 +98,49 @@ export const initTemporaryLerna = async (
 
   const packageIndices = [...Array(numPackets).keys()].map(x => x + 1)
 
-  // init sub-packages
+  // set up temporary repositories
+  const repositoryBase = path.join(tempDir.path, "remotes")
+  fs.mkdirSync(repositoryBase)
+
+  await initTemporaryBareRepository(repositoryBase, LERNA_ROOT_NAME)
   await Promise.all(
-    packageIndices.map(
-      async p => await initSubPackage(path.join(baseDir, "packages", `p${p}`))
+    packageIndices.map(p =>
+      initTemporaryBareRepository(repositoryBase, `p${p}`)
     )
   )
 
-  // set up temporary repositories
-  const repoBase = path.join(tempDir.path, "remotes")
-  fs.mkdirSync(repoBase)
+  // make initial git commit
+  await initializeAndPushLernaRepository(baseDir, repositoryBase)
 
-  await initTemporaryBareRepository(repoBase, LERNA_ROOT_NAME)
-  await Promise.all(
-    packageIndices.map(p => initTemporaryBareRepository(repoBase, `p${p}`))
-  )
+  try {
+    // init sub-packages (one after the other)
+    for (let i = 0; i < packageIndices.length; ++i) {
+      const p = packageIndices[i]
+      await lernaCreate(
+        `p${p}`,
+        path.join(repositoryBase, `p${p}`),
+        ["--yes"],
+        baseDir
+      )
+    }
+  } catch (err) {
+    console.error("error creating packages", err)
+  }
 
+  /*
   // write subtrees.json
   const packages = packageIndices.map(p => `p${p}`)
-  const subtrees = makeSubtrees(repoBase, packages)
+  const subtrees = makeSubtrees(repositoryBase, packages)
 
   fs.writeFileSync(
     path.join(baseDir, "subtrees.json"),
     JSON.stringify(subtrees)
   )
-
-  // make initial git commit
-  await initializeAndPushLernaRepo(baseDir, repoBase)
+  */
 
   return {
     path: tempDir.path,
-    repoBase,
+    repositoryBase,
     lernaBase: baseDir
   }
 }
@@ -136,9 +149,9 @@ export const initTemporaryBareRepository = async (
   baseDir: string,
   name: string
 ) => {
-  const repoPath = path.join(baseDir, name)
-  await promisify(fs.mkdir)(repoPath)
-  return execa.shell(`git init --bare`, { cwd: repoPath })
+  const repositoryPath = path.join(baseDir, name)
+  await promisify(fs.mkdir)(repositoryPath)
+  return execa.shell(`git init --bare`, { cwd: repositoryPath })
 }
 
 export const commitEverythingInPath = async (
@@ -149,16 +162,20 @@ export const commitEverythingInPath = async (
   return execa.shell(`git commit -m"${message}"`, { cwd: directory })
 }
 
-export const initializeAndPushLernaRepo = async (
+export const initializeAndPushLernaRepository = async (
   lernaBase: string,
-  repoBase: string
+  repositoryBase: string
 ) => {
   await execa.shell("git init", { cwd: lernaBase })
   await commitEverythingInPath(lernaBase, "initial")
   // tag it
   await gitTag("v1", "version 1", "HEAD", lernaBase)
   // add origin
-  await gitRemoteAdd("origin", path.join(repoBase, LERNA_ROOT_NAME), lernaBase)
+  await gitRemoteAdd(
+    "origin",
+    path.join(repositoryBase, LERNA_ROOT_NAME),
+    lernaBase
+  )
   // and push
   await gitPush("origin", "HEAD", lernaBase)
 }

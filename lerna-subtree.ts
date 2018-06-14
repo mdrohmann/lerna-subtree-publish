@@ -36,6 +36,7 @@ yargs
     "pull",
     "pull from subtree",
     args => {
+      // TODO: add an option to pull a specific tag / version
       return args.positional("name", {
         type: "string",
         describe: "sub-tree name"
@@ -44,6 +45,12 @@ yargs
     async args => {
       const handler = (c: SubtreeConfig, tn: string) =>
         gitSubtreeCmd(c, "pull", tn)
+      // TODO: tag the main repo with the version that we got (if it updated)
+
+      // TODO: Write the following message conditionally (only if we actually pulled something)
+      console.log(
+        "You might need to call `lerna bootstrap` if the sub-tree has updated."
+      )
       try {
         return commandSingleOrAll(args, handler)
       } catch (err) {

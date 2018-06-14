@@ -7,7 +7,9 @@ import {
   gitInit,
   gitRemoteAdd,
   gitCommit,
-  gitAdd
+  gitAdd,
+  getSubtreePackageJson,
+  gitTag
 } from "../common"
 import * as path from "path"
 import { SubtreeConfig } from "../types"
@@ -75,6 +77,24 @@ export const lernaCreate = async (
   // TODO: maybe we should allow to create the packages in other folders
   embedNpmInit(initArgs, packagePath)
 
+  // make it private by default
+  const packageJsonFile = path.join(packagePath, "package.json")
+  const packageJson = JSON.parse(
+    await promisify(fs.readFile)(packageJsonFile, "utf8")
+  )
+  await promisify(fs.writeFile)(
+    packageJsonFile,
+    JSON.stringify(
+      {
+        ...packageJson,
+        private: true
+      },
+      null,
+      2
+    ),
+    "utf8"
+  )
+
   const config: SubtreeConfig = {
     localFolder,
     repository,
@@ -98,7 +118,6 @@ export const lernaCreate = async (
     })
   }
 
-  console.log("make the stuff")
   // We cannot just push changes to create repo... We need to use subtree add at
   // some point..., so we have to
   const result = await (async () => {
@@ -110,7 +129,6 @@ export const lernaCreate = async (
       await execa.shell('git commit -m"initial commit"', { cwd: packagePath })
       // * add origin and push
       await gitRemoteAdd("origin", repository, packagePath)
-      console.log("pushing to remote")
       const res = await gitPush("origin", "HEAD", packagePath)
       return {
         okay: res.code === 0,
@@ -123,7 +141,6 @@ export const lernaCreate = async (
       }
     }
   })()
-  console.log("delete old git repo")
   // clean up the git repository.
   await promisify(rimraf)(path.join(packagePath, ".git"))
 
@@ -155,5 +172,9 @@ export const lernaCreate = async (
   // * add the package back
   await gitSubtreeAdd(config, name, cwd)
 
-  // TODO: add tags
+  // TODO: I believe that this should go into gitSubtreeAdd...
+  const version = (await getSubtreePackageJson(config, "HEAD", cwd)).version
+  const tag = `${name}@${version}`
+  await gitTag(tag, `Add package ${name} with version ${version}`, "HEAD", cwd)
+  await gitPush("origin", "HEAD", cwd)
 }

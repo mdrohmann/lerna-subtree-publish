@@ -1,11 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`lerna-create should create a new sub-tree package 1`] = `
-"*   commit  (HEAD -> master, origin/master)
+"*   commit  (HEAD -> master, tag: p4@1.0.0, origin/master)
 |\\\\  
 | * commit 
 * commit 
 * commit 
 * commit  (tag: v1)
 * commit  (p4/master)"
+`;
+
+exports[`lerna-create should create a new sub-tree package 2`] = `
+"{
+  \\"p4\\": {
+    \\"localFolder\\": \\"packages/p4\\",
+    \\"repository\\": \\"repository/p4\\",
+    \\"branch\\": \\"master\\"
+  }
+}"
 `;

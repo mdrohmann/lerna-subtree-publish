@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lerna-publish should do the lerna publish work and tag remote sub-tree repository 1`] = `
+"* commit  (HEAD -> master, tag: p1@2.0.0, origin/master)
+* commit 
+*   commit  (tag: p2@1.0.0)
+|\\\\  
+| * commit 
+* commit 
+*   commit  (tag: p1@1.0.0)
+|\\\\  
+| * commit 
+* commit 
+* commit  (tag: v1)
+* commit  (p1/master)
+* commit 
+* commit "
+`;
+
+exports[`lerna-publish should do the lerna publish work and tag remote sub-tree repository 2`] = `
+"* commit  (HEAD -> master, tag: v2.0.0)
+* commit 
+* commit "
+`;
+
+exports[`lerna-publish should do the lerna publish work and tag remote sub-tree repository 3`] = `
+"* commit  (HEAD -> master, tag: p1@2.0.0)
+* commit 
+*   commit  (tag: p2@1.0.0)
+|\\\\  
+| * commit 
+* commit 
+*   commit  (tag: p1@1.0.0)
+|\\\\  
+| * commit 
+* commit 
+* commit  (tag: v1)"
+`;
+
+exports[`lerna-publish should initialize the remote repositories correctly 1`] = `
+"*   commit  (HEAD -> master, tag: p2@1.0.0, origin/master)
+|\\\\  
+| * commit 
+* commit 
+*   commit  (tag: p1@1.0.0)
+|\\\\  
+| * commit 
+* commit 
+* commit  (tag: v1)"
+`;

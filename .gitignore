@@ -5,5 +5,4 @@ node_modules/
 *.tgz
 yarn-error.log
 *.bak
-*.tgz
 .vscode/settings.json
