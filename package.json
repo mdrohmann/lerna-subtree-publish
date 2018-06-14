@@ -13,6 +13,8 @@
     "lerna-create": "./build/lerna-create.js"
   },
   "scripts": {
+    "clean": "rimraf ./build",
+    "prebuild": "npm run clean",
     "build": "tsc --project . --target es5 --module commonjs",
     "prepare": "npm run build",
     "test": "jest"
