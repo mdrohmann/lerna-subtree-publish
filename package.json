@@ -18,8 +18,7 @@
     "test": "jest"
   },
   "files": [
-    "*.js",
-    "*.ts"
+    "build"
   ],
   "jest": {
     "transform": {
