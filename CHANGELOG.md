@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.4"></a>
+## [1.2.4](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.2.3...v1.2.4) (2018-06-14)
+
+
+### Bug Fixes
+
+* **packaging:** last change has not been uploaded... ([e49b241](https://gitlab.com/mcdrohmann/lerna-subtree-publish/commit/e49b241))
+
+
+
 <a name="1.2.3"></a>
 ## [1.2.3](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.2.2...v1.2.3) (2018-06-14)
 
