@@ -1,8 +1,7 @@
 #!/usr/bin/env node
+import { lernaPublish } from "./lib/publish"
 import * as path from "path"
-import * as shell from "shelljs"
-import * as child_process from "child_process"
-import { Subtrees } from "./types"
+import * as color from "colour"
 
 /**
  * This script can be used just like the `lerna publish` command.
@@ -18,119 +17,10 @@ import { Subtrees } from "./types"
  */
 
 // tslint:disable:no-console
-const lernaArgs = process.argv.slice(2)
 
 process.env.PATH +=
   path.delimiter + path.join(__dirname, "node_modules", ".bin")
 
-// tslint:disable-next-line:no-var-requires
-const subtrees: Subtrees = require(path.join(process.cwd(), "subtrees.json"))
-
-// We will push the subtree changes before running lerna publish in order to
-// make sure that we do not have to pull first.
-Object.keys(subtrees).forEach(s => {
-  console.log(`Pushing sub-tree changes to ${s}`)
-  const pushSubtreeRes = shell.exec(`gitsbt push ${s}`)
-  if (pushSubtreeRes.code !== 0) {
-    console.error(`Could not push changes to sub-tree ${s}`)
-  }
-})
-
-try {
-  child_process.execFileSync("lerna", ["publish"].concat(lernaArgs), {
-    stdio: "inherit"
-  })
-} catch (error) {
-  process.exit(-2)
-}
-if (
-  lernaArgs.length === 1 &&
-  (lernaArgs[0] === "-h" ||
-    lernaArgs[0] === "-v" ||
-    lernaArgs[0] === "--help" ||
-    lernaArgs[0] === "--version")
-) {
-  process.exit(0)
-}
-
-// a short shim that I use because shell.exec(..., {silent: true}) believes that
-// it does not always return an ExecOutputReturnValue, so it needs an explicit
-// cast.
-const shellExecSilent = (cmd: string): shell.ExecOutputReturnValue =>
-  shell.exec(cmd, { silent: true }) as shell.ExecOutputReturnValue
-
-Object.keys(subtrees).forEach(s => {
-  console.log(`Pushing sub-tree changes again to ${s}`)
-  const pushSubtreeRes = shell.exec(`gitsbt push ${s}`)
-  if (pushSubtreeRes.code !== 0) {
-    console.error(`Could not push changes to sub-tree ${s}`)
-  }
-  const config = subtrees[s]
-  const res = shellExecSilent(
-    `git log -n 2 --pretty=format:%h -- ${config.localFolder}`
-  )
-
-  if (res.code !== 0) {
-    console.error(
-      `Could not find the last two changes in ${config.localFolder}: ${
-        res.stderr
-      }`
-    )
-    return
-  }
-  const lastTwoChangesToSubtree = res.stdout.split("\n")
-
-  const resHeadRev = shellExecSilent(`git rev-parse HEAD`)
-
-  if (
-    resHeadRev.code === 0 &&
-    resHeadRev.stdout ===
-      shellExecSilent(`git rev-parse ${lastTwoChangesToSubtree[0]}`).stdout
-  ) {
-    const lastTwoVersions = lastTwoChangesToSubtree.map((c: string) => {
-      const res = shellExecSilent(
-        `git show ${c}:${config.localFolder}/package.json`
-      )
-      if (res.code !== 0) {
-        console.error(`Could not parse the version in package.json`)
-        return ""
-      }
-      return JSON.parse(res.stdout).version
-    })
-
-    if (lastTwoVersions[0] !== lastTwoVersions[1]) {
-      console.log(`We have a new version for ${s}: Tagging and pushing!`)
-      // We have a new version.  So, we have to tag and push
-      const newVersion = lastTwoVersions[0]
-      console.log(`create new tag v${newVersion} and push`)
-
-      if (
-        shellExecSilent(
-          `git tag -a v${newVersion} -m"version ${newVersion}" remotes/${s}/${
-            config.branch
-          }`
-        ).code !== 0
-      ) {
-        console.error(
-          `could not tag remote branch ${s}/${
-            config.branch
-          } with tag v${newVersion}`
-        )
-        return
-      }
-      if (shellExecSilent(`git push ${s} v${newVersion}`).code !== 0) {
-        console.error(
-          `could not push the version tag v${newVersion} to remote branch ${s}`
-        )
-      }
-      // clean-up (remove the version tag locally)
-      if (shellExecSilent(`git tag -d v${newVersion}`).code !== 0) {
-        console.error(`could not remove the tag v${newVersion} locally`)
-      }
-    } else {
-      console.log(`${s}: no version change`)
-    }
-  } else {
-    console.log(`${s}: latest commit did not affect us`)
-  }
-})
+lernaPublish(process.argv)
+  .then(() => console.log("done"))
+  .catch(error => console.error(color.red(error)))

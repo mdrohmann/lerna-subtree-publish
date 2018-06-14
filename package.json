@@ -12,21 +12,58 @@
     "gitsbt-all": "./gitsbt-all.js"
   },
   "scripts": {
-    "build": "tsc *.ts",
-    "prepare": "npm run build"
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "jest"
   },
   "files": [
     "*.js",
     "*.ts"
   ],
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/src/arc",
+      "/test/"
+    ],
+    "collectCoverage": true,
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/",
+      "/build/"
+    ]
+  },
   "dependencies": {
+    "colour": "^0.7.1",
+    "execa": "^0.10.0",
+    "mkdirp-promise": "^5.0.1",
     "shell-escape": "^0.2.0",
-    "shelljs": "^0.8.2"
+    "shelljs": "^0.8.2",
+    "tmp": "^0.0.33",
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
+    "@types/execa": "^0.9.0",
+    "@types/jest": "^23.0.0",
+    "@types/mkdirp-promise": "^5.0.0",
+    "@types/rimraf": "^2.0.2",
     "@types/shell-escape": "^0.2.0",
     "@types/shelljs": "^0.8.0",
+    "@types/tmp": "^0.0.33",
+    "@types/yargs": "^11.0.0",
     "cz-conventional-changelog": "^2.1.0",
+    "jest": "^23.1.0",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^22.4.6",
     "typescript": "^2.9.1"
   },
   "config": {
