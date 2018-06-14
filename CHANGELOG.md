@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.1.3...v1.2.0) (2018-06-14)
+
+
+### Bug Fixes
+
+* **lerna-publish:** Fix lerna-publish by unit testing it ([a59757b](https://gitlab.com/mcdrohmann/lerna-subtree-publish/commit/a59757b))
+
+
+### Features
+
+* **lerna-create:** Add a command that creates a new subtree package with a single command ([5d1d6bf](https://gitlab.com/mcdrohmann/lerna-subtree-publish/commit/5d1d6bf))
+
+
+### Performance Improvements
+
+* **subtreePush:** Push is run with --no-verify flag whenever possible. ([f8d8fbc](https://gitlab.com/mcdrohmann/lerna-subtree-publish/commit/f8d8fbc))
+
+
+
 <a name="1.1.3"></a>
 ## [1.1.3](https://gitlab.com/mcdrohmann/lerna-subtree-publish/compare/v1.1.2...v1.1.3) (2018-06-07)
 
