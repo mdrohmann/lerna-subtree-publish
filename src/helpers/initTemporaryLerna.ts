@@ -4,8 +4,8 @@ import * as fs from "fs"
 import * as path from "path"
 import * as execa from "execa"
 import { SubtreeConfig } from "types"
-import { gitTag, gitRemoteAdd, gitPush } from "../common"
 import { lernaCreate } from "../lib/create"
+import { gitTag, gitRemoteAdd, gitPush } from "../lib/git"
 
 export const LERNA_ROOT_NAME = "lerna-tmp-root"
 

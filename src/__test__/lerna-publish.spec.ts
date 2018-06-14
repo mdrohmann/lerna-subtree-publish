@@ -6,12 +6,13 @@ import {
 import * as path from "path"
 import * as fs from "fs"
 import rimraf from "rimraf"
-import { gitSubtreeAdd, commandAll } from "../common"
-import { gitHashOfCommitRef } from "../common"
 import { TemporaryDirectories } from "../helpers/initTemporaryLerna"
 import { promisify } from "util"
 import { expectableCommitTree } from "../helpers/expect"
 import { lernaPublish } from "../lib/publish"
+import { commandAll } from "../lib/commandWrapper"
+import { gitSubtreeAdd } from "../lib/gitSubtree"
+import { gitHashOfCommitRef } from "../lib/git"
 
 describe("lerna-publish", () => {
   let directories: TemporaryDirectories
@@ -23,7 +24,7 @@ describe("lerna-publish", () => {
 
   afterAll(async done => {
     try {
-      // await promisify(rimraf)(directories.path)
+      await promisify(rimraf)(directories.path)
     } catch (err) {
       console.error("what is going on here? ", err)
     }

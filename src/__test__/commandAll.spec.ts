@@ -5,10 +5,10 @@ import {
 } from "../helpers/initTemporaryLerna"
 import rimraf from "rimraf"
 import { promisify } from "util"
-import { commandAll } from "../common"
 import * as fs from "fs"
 import * as path from "path"
 import * as execa from "execa"
+import { commandAll } from "../lib/commandWrapper"
 
 describe("commandAll", () => {
   let directories: TemporaryDirectories

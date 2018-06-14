@@ -1,13 +1,8 @@
 import * as yargs from "yargs"
 import { SubtreeConfig } from "./types"
-import {
-  getSubtrees,
-  gitSubtreeAdd,
-  gitSubtreeCmd,
-  commandAll,
-  commandSingle
-} from "./common"
 import * as color from "colour"
+import { commandAll, commandSingle } from "./lib/commandWrapper"
+import { gitSubtreeAdd, gitSubtreeCmd, getSubtrees } from "./lib/gitSubtree"
 
 const commandSingleOrAll = async (
   args: yargs.Arguments,

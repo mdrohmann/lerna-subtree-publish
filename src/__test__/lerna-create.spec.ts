@@ -8,10 +8,11 @@ import { lernaCreate } from "../lib/create"
 import * as lc from "../lib/common"
 import * as fs from "fs"
 import * as path from "path"
-import { getLernaJson, gitPush } from "../common"
 import * as execa from "execa"
 import mkdirp from "mkdirp-promise"
 import { expectableCommitTree, expectableSubtrees } from "../helpers/expect"
+import { getLernaJson } from "../lib/lerna"
+import { gitPush } from "../lib/git"
 
 describe("lerna-create", () => {
   let directories: TemporaryDirectories

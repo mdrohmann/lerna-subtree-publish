@@ -1,24 +1,22 @@
 import { embedRuntime } from "./common"
-import {
-  gitChangesPending,
-  getLernaJson,
-  gitSubtreeAdd,
-  getSubtrees,
-  gitInit,
-  gitRemoteAdd,
-  gitCommit,
-  gitAdd,
-  getSubtreePackageJson,
-  gitTag
-} from "../common"
 import * as path from "path"
 import { SubtreeConfig } from "../types"
 import * as fs from "fs"
 import { promisify } from "util"
 import * as execa from "execa"
-import { gitPush } from "../common"
 import rimraf from "rimraf"
 import mkdirp from "mkdirp-promise"
+import {
+  gitChangesPending,
+  gitInit,
+  gitRemoteAdd,
+  gitPush,
+  gitAdd,
+  gitCommit,
+  gitTag
+} from "./git"
+import { getSubtrees, gitSubtreeAdd, getSubtreePackageJson } from "./gitSubtree"
+import { getLernaJson } from "./lerna"
 
 const embedNpmInit = (
   argv: ReadonlyArray<string>,

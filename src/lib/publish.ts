@@ -1,17 +1,16 @@
+import * as color from "colour"
+import { embedRuntime } from "./common"
 import {
-  getUpdatedPackages,
-  gitSubtreeCmd,
-  commandAll,
   gitChangesPending,
   gitFolderHashes,
+  gitHashOfCommitRef,
   gitTag,
   gitPush,
-  gitTagDelete,
-  gitSubtreeSplit
-} from "../common"
-import * as color from "colour"
-import { gitHashOfCommitRef, getSubtreePackageJson } from "../common"
-import { embedRuntime } from "./common"
+  gitTagDelete
+} from "./git"
+import { getUpdatedPackages } from "./lerna"
+import { commandAll } from "./commandWrapper"
+import { gitSubtreeSplit, getSubtreePackageJson } from "./gitSubtree"
 
 const embedLernaPublish = (
   argv: ReadonlyArray<string>,
