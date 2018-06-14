@@ -108,7 +108,7 @@ describe("lerna-create", () => {
       )
       expect(true).toBe(true)
 
-      await gitPush("origin", "master", directories.lernaBase)
+      await gitPush("origin", "master", true, directories.lernaBase)
 
       expect(
         await expectableCommitTree(directories.lernaBase, [

@@ -23,7 +23,7 @@ describe("lerna-publish", () => {
 
   afterAll(async done => {
     try {
-      await promisify(rimraf)(directories.path)
+      // await promisify(rimraf)(directories.path)
     } catch (err) {
       console.error("what is going on here? ", err)
     }

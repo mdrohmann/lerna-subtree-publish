@@ -47,15 +47,16 @@ export const lernaPublish = async (
 
   await commandAll(
     async (c, tn) => {
-      // push sub-tree
-      await gitSubtreeCmd(c, "push", tn, cwd)
-
       const lastTwoChanges = await gitFolderHashes(c.localFolder, 2, cwd)
 
       const headSha = await gitHashOfCommitRef("HEAD", { cwd })
       const lastChangeSha = await gitHashOfCommitRef(lastTwoChanges[0], { cwd })
 
       if (headSha === lastChangeSha) {
+        // this package is affected by the publication, so split it up and
+        // eventually push it, but first check if we have to tag it too.
+        const splitHash = await gitSubtreeSplit(c, "", cwd)
+
         const lastTwoVersions = await Promise.all(
           lastTwoChanges.map(
             async (ref: string) =>
@@ -64,20 +65,23 @@ export const lernaPublish = async (
         )
         if (lastTwoVersions[0] !== lastTwoVersions[1]) {
           console.log(
-            `We have a new version for ${color.green(tn)}: Tagging and pushing!`
+            `We have a new version for ${color.green(
+              tn
+            )}: Tag it before pushing!`
           )
           const newVersion = lastTwoVersions[0]
           const newVersionTag = `v${newVersion}`
 
-          const splitHash = await gitSubtreeSplit(c, "master", cwd)
-
           await gitTag(newVersionTag, `version newVersion`, splitHash, cwd)
 
-          await gitPush(tn, newVersionTag, cwd)
+          await gitPush(tn, `${splitHash}:refs/heads/${c.branch}`, true, cwd)
 
           await gitTagDelete(newVersionTag, cwd)
         } else {
           console.log(`${color.yellow(tn)}: no version change: skip tagging`)
+          // we still need to push, this can happen if our version dependencies have changed...
+          // TODO: Test this branch
+          await gitPush(tn, `${splitHash}:refs/heads/${c.branch}`, true, cwd)
         }
       } else {
         console.log(`${color.yellow(tn)}: no new publication, skip tagging`)

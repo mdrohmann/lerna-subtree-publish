@@ -170,9 +170,15 @@ export const gitCommit = async (
 export const gitPush = async (
   upstream: string,
   ref: string,
+  noVerify: boolean = false,
   cwd: string = process.cwd()
 ) => {
-  return execa.shell(`git push --follow-tags ${upstream} ${ref}`, { cwd })
+  return execa.shell(
+    `git push ${
+      noVerify ? "--no-verify" : ""
+    } --follow-tags ${upstream} ${ref}`,
+    { cwd }
+  )
 }
 
 export const gitHashOfTag = async (

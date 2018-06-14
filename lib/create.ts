@@ -129,7 +129,7 @@ export const lernaCreate = async (
       await execa.shell('git commit -m"initial commit"', { cwd: packagePath })
       // * add origin and push
       await gitRemoteAdd("origin", repository, packagePath)
-      const res = await gitPush("origin", "HEAD", packagePath)
+      const res = await gitPush("origin", "HEAD", true, packagePath)
       return {
         okay: res.code === 0,
         error: res.stderr
@@ -176,5 +176,5 @@ export const lernaCreate = async (
   const version = (await getSubtreePackageJson(config, "HEAD", cwd)).version
   const tag = `${name}@${version}`
   await gitTag(tag, `Add package ${name} with version ${version}`, "HEAD", cwd)
-  await gitPush("origin", "HEAD", cwd)
+  await gitPush("origin", "HEAD", true, cwd)
 }
