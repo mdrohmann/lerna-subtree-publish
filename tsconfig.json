@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "outDir": "./",
+    "outDir": "./build",
     "moduleResolution": "node",
     "module": "esnext",
-    "declaration": true,
+    "declaration": false,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "strict": true /* Enable all strict type-checking options. */,
 
@@ -26,7 +26,7 @@
     "listFiles": false /* Print names of files part of the compilation. */,
     "pretty": true /* Stylize errors and messages using color and context. */,
     "lib": ["es2015", "es2016", "es2017", "es2017.object"],
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
       "colour": ["colour.d.ts"]
     },
@@ -40,6 +40,6 @@
     "typeRoots": ["node_modules/@types"],
     "inlineSourceMap": true
   },
-  "include": ["./"],
+  "include": ["./src"],
   "exclude": ["node_modules/**", "./**/*.spec.ts", "./**/__fixtures__/*.ts"]
 }

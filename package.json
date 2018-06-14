@@ -8,9 +8,9 @@
   "license": "MIT",
   "private": false,
   "bin": {
-    "lerna-publish": "./index.js",
-    "lerna-subtree": "./lerna-subtree.js",
-    "lerna-create": "./lerna-create.js"
+    "lerna-publish": "./build/index.js",
+    "lerna-subtree": "./build/lerna-subtree.js",
+    "lerna-create": "./build/lerna-create.js"
   },
   "scripts": {
     "build": "tsc",
@@ -34,7 +34,8 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/__test__/",
-      "/test/"
+      "/test/",
+      "/build/"
     ],
     "collectCoverage": true,
     "testPathIgnorePatterns": [

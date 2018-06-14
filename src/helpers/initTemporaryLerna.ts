@@ -177,5 +177,5 @@ export const initializeAndPushLernaRepository = async (
     lernaBase
   )
   // and push
-  await gitPush("origin", "HEAD", lernaBase)
+  await gitPush("origin", "HEAD", true, lernaBase)
 }
