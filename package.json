@@ -1,6 +1,6 @@
 {
   "name": "lerna-subtree-publish",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "tools to publish packages with lerna and git subtree",
   "main": "build/index.js",
   "repository": "git@github.com:mdrohmann/lerna-subtree-publish.git",
