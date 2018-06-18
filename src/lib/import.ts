@@ -4,7 +4,7 @@ import * as path from "path"
 import { promisify } from "util"
 import * as fs from "fs"
 import mkdirp from "mkdirp-promise"
-import { SubtreeConfig } from "types"
+import { SubtreeConfig } from "../types"
 
 export const lernaImport = async (
   name: string,

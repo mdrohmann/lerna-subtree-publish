@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { lernaSplitArgs } from "./lib/create"
-import { lernaImport } from "lib/import"
+import { lernaImport } from "./lib/import"
 
 /**
  * - create a new subtree.json entry
