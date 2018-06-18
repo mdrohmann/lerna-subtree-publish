@@ -3,7 +3,7 @@
   "version": "1.3.0",
   "description": "tools to publish packages with lerna and git subtree",
   "main": "build/index.js",
-  "repository": "git@gitlab.com/mcdrohmann/lerna-subtree-publish.git",
+  "repository": "git@github.com:mdrohmann/lerna-subtree-publish.git",
   "author": "Martin C Drohmann <martin@connectedsignals.com>",
   "license": "MIT",
   "private": false,
