@@ -17,6 +17,13 @@ packages/
 
 Usually every package is in a separate sub-repository configured as [described here](https://github.com/plitex/git-subtree).
 
+We also assume that you want to use the independent version schema for your
+lerna packages.
+
+TODO:
+
+- [ ] Support sub-trees in local folders other than those of the form `packages/name`
+
 ## What it does
 
 The `lerna-publish` script from this module does the following:
@@ -47,10 +54,34 @@ The `lerna-publish` script from this module does the following:
 
 - Configure your `subtrees.json` and initialize the sub repositories
 
-      ./node_modules/.bin/gitsbt init
+      ./node_modules/.bin/lerna-subtree init
 
 - Use `./node_modules/.bin/lerna-publish` whenever you want to publish some of
   your changes in sub-tree repositories.
+
+### Creating and importing more packages
+
+You can also add existing repositories with the command
+
+    ./node_modules/.bin/lerna-import packageName --repository repositoryUrl
+
+or create a new subtree-repository with the command
+
+    ./node_modules/.bin/lerna-create packagename --repository
+    repositoryUrl
+
+The latter command assumes that you can push to the repositoryUrl either because it will be created on push or because it hosts an empty repository.
+
+### Update the subtrees
+
+`lerna-subtree push` pushes one or all subtree repositories. This skips all the `lerna publish` magic and can be used if you want to contribute upstream to a sub-repository without changing the package version.
+
+`lerna-subtree push` pulls changes downstream from a sub-repository.
+
+TODO:
+
+- [ ] If the version changes during a `lerna-subtree pull` operation, tags should be updated in the root repository.
+- [ ] lerna-subtree pull should enable to pull a specific version.
 
 ## Troubleshooting
 
