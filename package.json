@@ -8,9 +8,10 @@
   "license": "MIT",
   "private": false,
   "bin": {
+    "lerna-create": "./build/lerna-create.js",
+    "lerna-import": "./build/lerna-import.js",
     "lerna-publish": "./build/index.js",
-    "lerna-subtree": "./build/lerna-subtree.js",
-    "lerna-create": "./build/lerna-create.js"
+    "lerna-subtree": "./build/lerna-subtree.js"
   },
   "scripts": {
     "clean": "rimraf ./build",
@@ -48,6 +49,7 @@
   "dependencies": {
     "colour": "^0.7.1",
     "execa": "^0.10.0",
+    "inquirer": "^6.0.0",
     "mkdirp-promise": "^5.0.1",
     "rimraf": "^2.6.2",
     "shell-escape": "^0.2.0",
@@ -57,6 +59,7 @@
   },
   "devDependencies": {
     "@types/execa": "^0.9.0",
+    "@types/inquirer": "^0.0.41",
     "@types/jest": "^23.0.0",
     "@types/mkdirp-promise": "^5.0.0",
     "@types/rimraf": "^2.0.2",

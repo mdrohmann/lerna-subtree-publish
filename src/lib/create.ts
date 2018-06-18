@@ -6,6 +6,7 @@ import { promisify } from "util"
 import * as execa from "execa"
 import rimraf from "rimraf"
 import mkdirp from "mkdirp-promise"
+import { prompt } from "inquirer"
 import {
   gitChangesPending,
   gitInit,
@@ -66,7 +67,15 @@ export const lernaCreate = async (
   const packagePath = path.join(cwd, localFolder)
 
   if (await promisify(fs.exists)(packagePath)) {
-    throw new Error(`A package already exists under ${localFolder}`)
+    const answer = await prompt<{ proceed: boolean }>({
+      type: "confirm",
+      name: "proceed",
+      message: `Folder ${localFolder} already exists.  Do you want to create a repo from the contents in folder`,
+      default: false
+    })
+    if (!answer.proceed) {
+      return
+    }
   }
 
   // ensure that packagePath exists
@@ -126,7 +135,7 @@ export const lernaCreate = async (
       await execa.shell(`git add .`, { cwd: packagePath })
       await execa.shell('git commit -m"initial commit"', { cwd: packagePath })
       // * add origin and push
-      await gitRemoteAdd("origin", repository, packagePath)
+      await gitRemoteAdd("origin", repository, false, packagePath)
       const res = await gitPush("origin", "HEAD", true, packagePath)
       return {
         okay: res.code === 0,
@@ -168,11 +177,8 @@ export const lernaCreate = async (
   await gitCommit(`add subtree package ${name}`, cwd)
 
   // * add the package back
-  await gitSubtreeAdd(config, name, cwd)
+  await gitSubtreeAdd(config, name, false, cwd)
 
   // TODO: I believe that this should go into gitSubtreeAdd...
-  const version = (await getSubtreePackageJson(config, "HEAD", cwd)).version
-  const tag = `${name}@${version}`
-  await gitTag(tag, `Add package ${name} with version ${version}`, "HEAD", cwd)
-  await gitPush("origin", "HEAD", true, cwd)
+  // await gitPush("origin", "HEAD", true, cwd)
 }

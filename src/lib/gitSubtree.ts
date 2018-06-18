@@ -3,7 +3,7 @@ import * as execa from "execa"
 import * as path from "path"
 import * as fs from "fs"
 import { promisify } from "util"
-import { gitGetRemotes, gitRemoteAdd } from "./git"
+import { gitGetRemotes, gitRemoteAdd, gitTag } from "./git"
 import * as color from "colour"
 
 // a short shim that I use because shell.exec(..., {silent: true}) believes that
@@ -38,6 +38,7 @@ export const getSubtreePackageJson = async (
 export const gitSubtreeAdd = async (
   config: SubtreeConfig,
   treeName: string,
+  autoFetch: boolean = true,
   cwd: string = process.cwd()
 ) => {
   const localFolderExists = await (async () => {
@@ -53,7 +54,7 @@ export const gitSubtreeAdd = async (
   if (remoteExists) {
     console.log(`Remote ${color.yellow(treeName)} already exists`)
   } else {
-    await gitRemoteAdd(treeName, config.repository, cwd)
+    await gitRemoteAdd(treeName, config.repository, autoFetch, cwd)
   }
   if (localFolderExists) {
     console.log(
@@ -69,6 +70,18 @@ export const gitSubtreeAdd = async (
         config.branch
       } --squash`,
       { cwd }
+    )
+
+    // Add tag of import to root repository
+    const version = (await getSubtreePackageJson(config, "HEAD", cwd)).version
+    const pkgName = path.basename(config.localFolder)
+    const tag = `${pkgName}@${version}`
+    console.log(`Add package ${pkgName} with version ${version}`)
+    await gitTag(
+      tag,
+      `Add package ${pkgName} with version ${version}`,
+      "HEAD",
+      cwd
     )
   }
 }

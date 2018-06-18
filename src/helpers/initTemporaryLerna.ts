@@ -174,6 +174,7 @@ export const initializeAndPushLernaRepository = async (
   await gitRemoteAdd(
     "origin",
     path.join(repositoryBase, LERNA_ROOT_NAME),
+    false,
     lernaBase
   )
   // and push

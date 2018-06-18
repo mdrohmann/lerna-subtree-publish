@@ -13,6 +13,7 @@ import mkdirp from "mkdirp-promise"
 import { expectableCommitTree, expectableSubtrees } from "../helpers/expect"
 import { getLernaJson } from "../lib/lerna"
 import { gitPush } from "../lib/git"
+import inquirer from "inquirer"
 
 describe("lerna-create", () => {
   let directories: TemporaryDirectories
@@ -45,15 +46,19 @@ describe("lerna-create", () => {
     done()
   })
 
-  it("should throw an error if name exists already", async done => {
+  it("should return if name exists already and user prompts no", async done => {
+    let promptSpy: jest.SpyInstance
+    promptSpy = jest.spyOn(inquirer, "prompt")
+    promptSpy.mockResolvedValue({ proceed: false })
     try {
       await mkdirp(path.join(directories.lernaBase, "packages", "p1"))
       await lernaCreate("p1", "invalid", ["--yes"], directories.lernaBase)
-      expect(true).toBe(false)
-    } catch (error) {
-      // console.log(error)
       expect(true).toBe(true)
+    } catch (error) {
+      console.log(error)
+      expect(false).toBe(true)
     }
+    promptSpy.mockRestore()
     done()
   })
 

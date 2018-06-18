@@ -158,5 +158,9 @@ export const gitGetRemotes = async (cwd: string = process.cwd()) => {
 export const gitRemoteAdd = async (
   treeName: string,
   repository: string,
+  fetch: boolean = true,
   cwd: string = process.cwd()
-) => execa.shell(`git remote add -f ${treeName} ${repository}`, { cwd })
+) =>
+  execa.shell(`git remote add ${fetch ? "-f" : ""} ${treeName} ${repository}`, {
+    cwd
+  })

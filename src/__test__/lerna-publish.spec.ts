@@ -12,7 +12,7 @@ import { expectableCommitTree } from "../helpers/expect"
 import { lernaPublish } from "../lib/publish"
 import { commandAll } from "../lib/commandWrapper"
 import { gitSubtreeAdd } from "../lib/gitSubtree"
-import { gitHashOfCommitRef } from "../lib/git"
+import { gitHashOfCommitRef, gitPush } from "../lib/git"
 
 describe("lerna-publish", () => {
   let directories: TemporaryDirectories
@@ -31,9 +31,16 @@ describe("lerna-publish", () => {
     done()
   })
 
+  it("should have initialized the repo correctly", async done => {
+    expect(
+      await expectableCommitTree(directories.lernaBase, ["master"])
+    ).toMatchSnapshot()
+    done()
+  })
+
   it("should initialize the remote repositories correctly", async done => {
     await commandAll(
-      async (c, tn) => gitSubtreeAdd(c, tn, directories.lernaBase),
+      async (c, tn) => gitSubtreeAdd(c, tn, true, directories.lernaBase),
       false,
       directories.lernaBase
     )
@@ -112,6 +119,8 @@ describe("lerna-publish", () => {
         "master"
       ])
     ).toMatchSnapshot()
+
+    await gitPush("origin", "HEAD", true, directories.lernaBase)
 
     expect(
       await expectableCommitTree(

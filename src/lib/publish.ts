@@ -79,7 +79,7 @@ export const lernaPublish = async (
         } else {
           console.log(`${color.yellow(tn)}: no version change: skip tagging`)
           // we still need to push, this can happen if our version dependencies have changed...
-          // TODO: Test this branch
+          // TODO: Test this code branch
           await gitPush(tn, `${splitHash}:refs/heads/${c.branch}`, true, cwd)
         }
       } else {

@@ -37,8 +37,8 @@ exports[`lerna-publish should do the lerna publish work and tag remote sub-tree 
 * commit  (tag: v1)"
 `;
 
-exports[`lerna-publish should initialize the remote repositories correctly 1`] = `
-"*   commit  (HEAD -> master, tag: p2@1.0.0, origin/master)
+exports[`lerna-publish should have initialized the repo correctly 1`] = `
+"*   commit  (HEAD -> master, tag: p2@1.0.0)
 |\\\\  
 | * commit 
 * commit 
@@ -46,5 +46,17 @@ exports[`lerna-publish should initialize the remote repositories correctly 1`] =
 |\\\\  
 | * commit 
 * commit 
-* commit  (tag: v1)"
+* commit  (tag: v1, origin/master)"
+`;
+
+exports[`lerna-publish should initialize the remote repositories correctly 1`] = `
+"*   commit  (HEAD -> master, tag: p2@1.0.0)
+|\\\\  
+| * commit 
+* commit 
+*   commit  (tag: p1@1.0.0)
+|\\\\  
+| * commit 
+* commit 
+* commit  (tag: v1, origin/master)"
 `;
