@@ -13,10 +13,9 @@ import {
   gitRemoteAdd,
   gitPush,
   gitAdd,
-  gitCommit,
-  gitTag
+  gitCommit
 } from "./git"
-import { getSubtrees, gitSubtreeAdd, getSubtreePackageJson } from "./gitSubtree"
+import { getSubtrees, gitSubtreeAdd } from "./gitSubtree"
 import { getLernaJson } from "./lerna"
 
 const embedNpmInit = (
