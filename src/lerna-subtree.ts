@@ -9,7 +9,7 @@ const commandSingleOrAll = async (
   handler: (config: SubtreeConfig, treeName: string) => Promise<void>
 ) => {
   if (args.all) {
-    return commandAll(handler)
+    return commandAll(handler, false, false)
   } else {
     if (args._.length < 2) {
       console.error(`Either select --all or a sub-tree name`, args)

@@ -4,16 +4,17 @@ import { getSubtrees, getSubtreeConfig } from "./gitSubtree"
 import { lastPublishedTag } from "./lastPublishedTag"
 import * as color from "colour"
 
-export const asyncExecution = async <T>(
-  tasks: Promise<T>[],
+export const asyncExecution = async <I, O>(
+  inputs: I[],
+  handler: (input: I) => Promise<O>,
   parallel: boolean
-): Promise<T[]> => {
+): Promise<O[]> => {
   if (parallel) {
-    return await Promise.all(tasks)
+    return await Promise.all(inputs.map(handler))
   } else {
-    let result: T[] = []
-    for (let index = 0; index < tasks.length; index++) {
-      const element = await tasks[index]
+    let result: O[] = []
+    for (let index = 0; index < inputs.length; ++index) {
+      const element = await handler(inputs[index])
       result.push(element)
     }
     return result
@@ -29,7 +30,8 @@ export const commandAll = async (
   await gitChangesPending(cwd)
   const subtrees = await getSubtrees(cwd)
   await asyncExecution(
-    Object.keys(subtrees).map(async treeName => {
+    Object.keys(subtrees),
+    async treeName => {
       if (
         skipCurrentTrees &&
         (await lastPublishedTag(subtrees, treeName, cwd)).current
@@ -41,7 +43,7 @@ export const commandAll = async (
         const config = subtrees[treeName]
         await handler(config, treeName)
       }
-    }),
+    },
     parallel
   )
 }
