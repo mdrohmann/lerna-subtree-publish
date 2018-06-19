@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.5"></a>
+## [1.3.5](https://github.com/mdrohmann/lerna-subtree-publish/compare/v1.3.4...v1.3.5) (2018-06-19)
+
+
+### Bug Fixes
+
+* **concurrency:** Execute git pull and push commands synchronously ([91919b3](https://github.com/mdrohmann/lerna-subtree-publish/commit/91919b3))
+
+
+
 <a name="1.3.4"></a>
 ## [1.3.4](https://github.com/mdrohmann/lerna-subtree-publish/compare/v1.3.3...v1.3.4) (2018-06-19)
 
