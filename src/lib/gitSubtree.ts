@@ -72,17 +72,21 @@ export const gitSubtreeAdd = async (
       { cwd }
     )
 
-    // Add tag of import to root repository
-    const version = (await getSubtreePackageJson(config, "HEAD", cwd)).version
-    const pkgName = path.basename(config.localFolder)
-    const tag = `${pkgName}@${version}`
-    console.log(`Add package ${pkgName} with version ${version}`)
-    await gitTag(
-      tag,
-      `Add package ${pkgName} with version ${version}`,
-      "HEAD",
-      cwd
-    )
+    // Try to add tag of import to root repository
+    try {
+      const version = (await getSubtreePackageJson(config, "HEAD", cwd)).version
+      const pkgName = path.basename(config.localFolder)
+      const tag = `${pkgName}@${version}`
+      console.log(`Add package ${pkgName} with version ${version}`)
+      await gitTag(
+        tag,
+        `Add package ${pkgName} with version ${version}`,
+        "HEAD",
+        cwd
+      )
+    } catch (error) {
+      console.log("Repository seems to NOT have a package.json file", error)
+    }
   }
 }
 

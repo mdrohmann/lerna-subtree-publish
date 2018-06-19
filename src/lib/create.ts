@@ -178,6 +178,5 @@ export const lernaCreate = async (
   // * add the package back
   await gitSubtreeAdd(config, name, false, cwd)
 
-  // TODO: I believe that this should go into gitSubtreeAdd...
   // await gitPush("origin", "HEAD", true, cwd)
 }
