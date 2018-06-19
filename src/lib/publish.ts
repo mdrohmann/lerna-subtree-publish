@@ -87,6 +87,7 @@ export const lernaPublish = async (
       }
     },
     false,
+    false,
     cwd
   )
 }
